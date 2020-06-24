@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+    <header>
+        <meta charset="utf-8">
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA-II2jk1XDeLrjnEcR7Jo1lrsgqwwHNiI&callback=initMap" async defer></script>
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <style>
+            body{background: transparent;}
+            iframe{border: none;}
+            #map{background-color:hsl(0, 100%, 50%)hsl(0, 100%, 50%); width: 98%; height:380px; position:absolute; z-index: 1;}
+            #TxtAddress{width: 30%; height: auto; padding: 10px; border-radius: 15px; border: rgb(254,0,0) 2px solid; float: left;
+                        margin: 0 2% 1% 27.5%;}
+            #BtnSubmit{width: 13%; padding: 5px 10px; margin: 0 0 1%; font-family: 'Open Sans'; font-size: 1.3em; border-radius: 10px; background-color: rgb(254,0,0); border: none; transition: all .4s; cursor: pointer;}
+            #BtnSubmit:hover{transform: scale(1.1);}
+            .marcador-ponto{width: 100%; font-family: 'Open Sans', sans-serif; text-align: center;}
+            .marcador-ponto a{font-weight: 600; text-align: center; color: #000; text-decoration: none;}
+            @media(max-width: 768px){
+                #TxtAddress{width: 90%; height: auto; padding: 10px; border-radius: 15px; border: rgb(254,0,0) 2px solid; float: left;
+                        margin: 0 auto;}
+                 #BtnSubmit{width: 50%; padding: 5px 10px; margin: 2% 25%; font-family: 'Open Sans'; font-size: 1em; border-radius: 10px; background-color: rgb(254,0,0); border: none; transition: all .4s; cursor: pointer;}
+            }
+        </style>
+
+        <title></title>
+    </header>
+
+    <body>
+        <div class="Form">
+            <input type="text" name="TxtAddress" id="TxtAddress" placeholder='Informe seu CEP aqui:'>
+            <input class="btn" type="button" name="BtnSubmit" id="BtnSubmit" value="Pesquisar">
+        </div>
+        <div id="map"></div>
+    </body>
+
+    <script type="text/javascript">
+        var map;																														// variavel que vai receber o mapa
+        var center = {lat: -22.873468, lng: -43.240699};										// onde o mapa será centralizado
+        var geocoder;																												// Fará a geolocalização do seu endereço;
+
+        function initMap() {																							// função que inicia o mapa
+            map = new google.maps.Map(document.getElementById('map'), {// map recebe um novo google maps, no elemento #map
+                center: center, // começamos centralizando o mapa nesta coordenada
+                zoom: 11, // nivel de zoom: 8
+//		disableDefaultUI: true																					// removemos os controles todos
+            
+                
+                
+            });
+
+
+            // Geocoding
+            var geocoder = new google.maps.Geocoder();																		// Ativa a funcionalidade de Geocoding
+            document.getElementById('BtnSubmit').addEventListener('click', function () {		// Quando clicar no botão de enviar
+                geocodeAddress(geocoder, map);																							// Chama a função de Geocoding
+            });
+
+            function geocodeAddress(geocoder, resultsMap) {																// Função de Geocoding
+                var address = document.getElementById('TxtAddress').value;									// Pega o campo TxtAddress
+                geocoder.geocode({'address': address}, function (results, status) {					// Faz o Geocoding
+                    if (status === google.maps.GeocoderStatus.OK) {															// Se ele achar o endereço
+                        resultsMap.setCenter(results[0].geometry.location);												// Centraliza o mapa no seu endereço
+                        var marker = new google.maps.Marker({// Cria um marcador
+                            map: resultsMap, // No mapa que você pediu na linha 39
+                            position: results[0].geometry.location, // No endereço que ele achou
+                            icon: ''	// E coloca um icone diferente
+                        });
+                    } else {																																		// Mas se não achar
+                        alert('Ops! Não achamos esse CEP.' + status);	// Retorna um erro
+                    }
+                });
+            }
+
+
+
+            // Markers
+            var content_01 = '<div class="marcador-ponto"><b>Barbearia do Zé</b><br> Ilha do Governador<br /> <a target="_blank" href="https://www.google.com.br/maps/place/Barbearia+do+Z%C3%A9/@-22.8063264,-43.2100507,18z/data=!4m15!1m9!2m8!1sbarbearia+do+z%C3%A9+-+ilha!3m6!1sbarbearia+do+z%C3%A9+-+ilha!2sBarbearia+do+Z%C3%A9+-+Estrada+do+Gale%C3%A3o,+2733+-+Portuguesa,+Rio+de+Janeiro+-+RJ,+21931-370!3s0x99782c0cbaf9ad:0xf1de193e644450f4!4m2!1d-43.2095851!2d-22.805526!3m4!1s0x99782c0cbaf9ad:0xf1de193e644450f4!8m2!3d-22.805526!4d-43.2095851">Ir até lá <i class="fa fa-paper-plane" aria-hidden="true"></i></a></div>';	// Conteúdo do marcador
+            var info_01 = new google.maps.InfoWindow({content: content_01});										// Faz o conteudo aparecer
+
+            var marker_01 = new google.maps.Marker({// Cria o marcador
+                position: {lat: -22.807397, lng: -43.2104959}, // Coloca ele na posição
+                map: map, // No nosso mapa
+                title: 'Barbearia do Zé - Ilha',	// E da um nome pro marcador
+                icon: 'localizador-35.png'
+            });
+
+            marker_01.addListener('click', function () {					// Quando clicarmos no marcador
+                info_01.open(map, marker_01);										// Mostramos a informação
+            });
+
+            //
+            //
+            // Se você fizer um while em PHP para gerar marcadores dinamicamente, seu mapa fica cheio deles!
+            //
+            //
+            
+            //
+            //
+            var content_02 = '<div class="marcador-ponto"><b>Barbearia do Zé</b><br> Méier <span style="font-size: 0.8em;">(Em Breve)</span><br /> <a target="_blank" href="https://www.google.com/maps/place/R.+Dias+da+Cruz,+170+-+Meier,+Rio+de+Janeiro+-+RJ,+20521-230,+Brasil/@-22.9023401,-43.2821065,18z/data=!4m13!1m7!3m6!1s0x997da4db68b13d:0x4887f0ce05ac6450!2sR.+Dias+da+Cruz,+170+-+Meier,+Rio+de+Janeiro+-+RJ,+20521-230,+Brasil!3b1!8m2!3d-22.9026712!4d-43.282074!3m4!1s0x997da4db68b13d:0x4887f0ce05ac6450!8m2!3d-22.9026712!4d-43.282074?hl=pt-BR">Ir até lá <i class="fa fa-paper-plane" aria-hidden="true"></i></a></div>';
+            var info_02 = new google.maps.InfoWindow({content: content_02});
+
+            var marker_02 = new google.maps.Marker({
+                position: {lat: -22.902518, lng: -43.282074},
+                map: map,
+                title: 'Barbearia do Zé - Méier',
+                icon: 'localizador-35.png'
+            });
+
+            marker_02.addListener('click', function () {
+                info_02.open(map, marker_02);
+            });
+            
+            //
+            //
+            var content_03 = '<div class="marcador-ponto"><b>Barbearia do Zé</b><br> Tijuca <span style="font-size: 0.8em;">(Em Breve)</span><br /> <a target="_blank" href="https://www.google.com/maps/place/R.+Ant%C3%B4nio+Bas%C3%ADlio,+95+-+Tijuca,+Rio+de+Janeiro+-+RJ,+20511-190,+Brasil/@-22.925208,-43.235853,16z/data=!4m5!3m4!1s0x997e14ce076549:0x75f1f9e7431842ac!8m2!3d-22.9252082!4d-43.2358527?hl=pt-BR">Ir até lá <i class="fa fa-paper-plane" aria-hidden="true"></i></a></div>';
+            var info_03 = new google.maps.InfoWindow({content: content_03});
+
+            var marker_03 = new google.maps.Marker({
+                position: {lat: -22.924694, lng: -43.235939},
+                map: map,
+                title: 'Barbearia do Zé - Tijuca',
+                icon: 'localizador-35.png'
+            });
+
+            marker_03.addListener('click', function () {
+                info_03.open(map, marker_03);
+            });
+            
+            //
+            //
+            var content_04 = '<div class="marcador-ponto"><b>Barbearia do Zé</b><br> Botafogo <span style="font-size: 0.8em;">(Em Breve)</span><br /> <a target="_blank" href="https://www.google.com/maps/place/R.+Paulino+Fernandes,+29+-+Botafogo,+Rio+de+Janeiro+-+RJ,+22270-050,+Brasil/@-22.952846,-43.185626,17z/data=!4m5!3m4!1s0x997fe51646d89d:0x31f97442b2505d24!8m2!3d-22.9528465!4d-43.1856257?hl=pt-BR">Ir até lá <i class="fa fa-paper-plane" aria-hidden="true"></i></a></div>';
+            var info_04 = new google.maps.InfoWindow({content: content_04});
+
+            var marker_04 = new google.maps.Marker({
+                position: {lat: -22.952589, lng: -43.185658},
+                map: map,
+                title: 'Barbearia do Zé - Botafogo',
+                icon: 'localizador-35.png'
+            });
+
+            marker_04.addListener('click', function () {
+                info_04.open(map, marker_04);
+            });
+            
+            //
+            //
+            var content_05 = '<div class="marcador-ponto"><b>Barbearia do Zé</b><br> Copacabana <span style="font-size: 0.8em;">(Em Breve)</span><br /> <a target="_blank" href="https://www.google.com/maps/place/Condom%C3%ADnio+do+Edif%C3%ADcio+Gali+-+R.+Bol%C3%ADvar,+80+-+Copacabana,+Rio+de+Janeiro+-+RJ,+22061-020,+Brasil/@-22.975661,-43.190404,16z/data=!4m5!3m4!1s0x9bd541243a009f:0xd0de036409466248!8m2!3d-22.9756934!4d-43.1904169?hl=pt-BR">Ir até lá <i class="fa fa-paper-plane" aria-hidden="true"></i></a></div>';
+            var info_05 = new google.maps.InfoWindow({content: content_05});
+
+            var marker_05 = new google.maps.Marker({
+                position: {lat: -22.975128, lng: -43.190511},
+                map: map,
+                title: 'Barbearia do Zé - Copacabana',
+                icon: 'localizador-35.png'
+            });
+
+            marker_05.addListener('click', function () {
+                info_05.open(map, marker_05);
+            });
+            
+            //
+            //
+            var content_06 = '<div class="marcador-ponto"><b>Empório Lidador</b><br> Barra Shopping <span style="font-size: 0.8em;">(Em Breve)</span><br /> <a target="_blank" href="https://www.google.com.br/maps/place/Barra+Shopping/@-22.9976164,-43.4285755,12z/data=!4m18!1m12!4m11!1m3!2m2!1d-43.3592243!2d-22.9954041!1m6!1m2!1s0x9bda381b2a956d:0xab31b1a7361a8b0d!2sbarra+shopping!2m2!1d-43.3585351!2d-22.9976318!3m4!1s0x9bda381b2a956d:0xab31b1a7361a8b0d!8m2!3d-22.9976318!4d-43.3585351">Ir até lá <i class="fa fa-paper-plane" aria-hidden="true"></i></a></div>';
+            var info_06 = new google.maps.InfoWindow({content: content_06});
+
+            var marker_06 = new google.maps.Marker({
+                position: {lat: -22.988767, lng: -43.359224},
+                map: map,
+                title: 'Empório Lidador - Barra Shopping',
+                icon: 'localizador-35.png'
+            });
+
+            marker_06.addListener('click', function () {
+                info_06.open(map, marker_06);
+            });
+            
+            //
+            //
+            var content_07 = '<div class="marcador-ponto"><b>Empório Lidador</b><br> Shopping Rio Sul <span style="font-size: 0.8em;">(Em Breve)</span><br /> <a target="_blank" href="https://www.google.com.br/maps/place/Shopping+Rio+Sul/@-22.9570563,-43.2468866,12z/data=!4m18!1m12!4m11!1m3!2m2!1d-43.1771921!2d-22.9554757!1m6!1m2!1s0x997ff850b6b019:0x86d4fe7f40840f69!2sshopping+rio+sul!2m2!1d-43.1768462!2d-22.9570717!3m4!1s0x997ff850b6b019:0x86d4fe7f40840f69!8m2!3d-22.9570717!4d-43.1768462">Ir até lá <i class="fa fa-paper-plane" aria-hidden="true"></i></a></div>';
+            var info_07 = new google.maps.InfoWindow({content: content_07});
+
+            var marker_07 = new google.maps.Marker({
+                position: {lat: -22.956424, lng: -43.177192},
+                map: map,
+                title: 'Empório Lidador - Shopping Rio Sul',
+                icon: 'localizador-35.png'
+            });
+
+            marker_07.addListener('click', function () {
+                info_07.open(map, marker_07);
+            });
+            
+            //
+            //
+            var content_08 = '<div class="marcador-ponto"><b>Empório Lidador</b><br> Centro <span style="font-size: 0.8em;">(Em Breve)</span><br /> <a target="_blank" href="https://www.google.com.br/maps/place/R.+do+Ouvidor,+108+-+Centro,+Rio+de+Janeiro+-+RJ,+20040-030/@-22.9034268,-43.1800102,17z/data=!4m13!1m7!3m6!1s0x997f5ef05e3d41:0x5ce1d0c75eeea7fb!2sR.+do+Ouvidor,+108+-+Centro,+Rio+de+Janeiro+-+RJ,+20040-030!3b1!8m2!3d-22.9034268!4d-43.1778215!3m4!1s0x997f5ef05e3d41:0x5ce1d0c75eeea7fb!8m2!3d-22.9034268!4d-43.1778215">Ir até lá <i class="fa fa-paper-plane" aria-hidden="true"></i></a></div>';
+            var info_08 = new google.maps.InfoWindow({content: content_08});
+
+            var marker_08 = new google.maps.Marker({
+                position: {lat: -22.903417, lng: -43.177843},
+                map: map,
+                title: 'Empório Lidador - Centro',
+                icon: 'localizador-35.png'
+            });
+
+            marker_08.addListener('click', function () {
+                info_08.open(map, marker_08);
+            });
+
+        }
+    </script>
+</html>
